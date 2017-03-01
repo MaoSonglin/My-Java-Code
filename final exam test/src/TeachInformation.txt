@@ -1,0 +1,6 @@
+   1 mao      mmmmmmmmm               5000.00 1    2015
+   2 uio      uuuuuuuuuuuuuuuuuuuu    2016.00 0    2016
+   3 lkio     ggggggggggggggggg      60000.00 0    2015
+   4 ppps     isodddddddddd           5000.00 0    2013
+   5 lodsa    efgtssdfaew           600000.00 0    2008
+   6 技术1      信息技术                   50000.00 0    2016

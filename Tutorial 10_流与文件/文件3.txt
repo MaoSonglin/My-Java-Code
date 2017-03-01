@@ -1,0 +1,31 @@
+第1行：	/*************************************************************
+第2行：	 * 
+第3行：	 * 编写一个程序，将电话号码输入文件。
+第4行：	 * 
+第5行：	 * ************************************************************/
+第6行：	
+第7行：	package test2;
+第8行：	import java.io.*;
+第9行：	import java.util.Scanner;
+第10行：	
+第11行：	public class Main {
+第12行：	
+第13行：		@SuppressWarnings("resource")
+第14行：		public static void main(String[] args) throws IOException {
+第15行：			// TODO Auto-generated method stub
+第16行：			System.out.println("输入一个电话号码：");
+第17行：			long phone = (new Scanner(System.in)).nextLong();
+第18行：			
+第19行：			File f = new File("telephone directory.txt");
+第20行：			if(!f.exists())
+第21行：				f.createNewFile();
+第22行：			
+第23行：			FileOutputStream fos = new FileOutputStream(f,true);
+第24行：			PrintStream ps = new PrintStream(fos);
+第25行：			
+第26行：			ps.println(phone);
+第27行：			ps.close();
+第28行：			fos.close();
+第29行：		}
+第30行：	
+第31行：	}

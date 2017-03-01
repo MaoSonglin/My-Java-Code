@@ -1,0 +1,109 @@
+/*读入写出查询总的流水情况*/
+
+//信1505-1班   20153144    毛松林
+package test3;
+import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+public class Main {
+
+	public static void main(String[] args) throws WithdrawException {
+
+		String a[] = selectAccount("张");				//查找一个用户
+		for(String aa:a)									//输出用户信息
+			System.out.println(aa+" "+aa.length());
+		Account client =null;								//声明一个账户对象
+		if(a[0]!=null)client=tramslate(a[0]);				//将查到的用户信息转化成对象
+		
+		client.deposit(5000);								//对用户进行存款操作
+		client.withdraw(3000);								//对用户进行取款操作
+		client.deposit(200);
+		client.withdraw(3000);
+		client.deposit(4000);
+		client.withdraw(8000);
+		client.withdraw(2000);
+		client.deposit(30000);
+		
+		String s[] = selectRecord(client.getAid());			//查找用户的流水记录
+		for(String ss:s)									//输出用户的流逝记录
+			System.out.println(ss);
+		
+		System.out.println(calculate(client.aid,"存款"));	//统计存款额
+		System.out.println(calculate(client.aid,"取款"));	//统计取款
+		
+	}
+	public static boolean addAccount(Account a){			//将一个账户的基本信息输出到文件ClientInforTable.txt中。
+		File f = new File("ClientInfoTable.txt");			//打开文件对象
+		try {
+			if(!f.exists())									//判断文件是否存在，如果文件不存在，建立一个新的文件
+				f.createNewFile();
+			FileWriter fos = new FileWriter(f,true);		//建立文件输出对象，不清空文件中原有的类容
+			PrintWriter pw = new PrintWriter(fos);			//用PrintWriter对象包装FileWriter对象
+			int n=a.getAccountNubmer();						//每建立一个用户表示用户数量的静态量加一
+			n++;
+			a.setAccountNubmer(n);
+			
+			pw.println(a.ToString());						//将用户的信息转化为字符串输出到文件中。
+			pw.close();
+			fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	//更新用户的数据
+	public static boolean updateAccount(String target,String replaced)
+	{//target为需要更新数据的账户的账号、姓名或者其他任意信息，replaced是该用户新的所有信息转化的字符串
+		boolean tag = true;									//更新成功标志
+		File  f = new File("ClientInfoTable.txt");				//打开文件
+		try{
+			RandomAccessFile arf = new RandomAccessFile(f,"rw");//建立随机流对象
+			String in = null;
+			while((in=arf.readLine())!=null){					//读取文件中的一行记录，判断该条记录是否为空
+				byte b[] = in.getBytes("iso-8859-1");			//将该条记录转化为byte数组，用来处理中文乱码
+				String temp = new String(b);					//用byte数组初始化一个用当前字符集编码的字符串
+				if(temp.indexOf(target)>=0){					//判断读入的字符串中是否存在target字符串
+					arf.seek(arf.getFilePointer()-b.length-2);	//如果存在target字符串，将随机流的指针移动到上次读入的开始位置
+					arf.write(replaced.getBytes());		//将replaced转化为byte数组写到文件中
+					//arf.writeChar('\n');
+				}
+			}
+			arf.close();										//关闭随机流对象
+		}catch(IOException e){									//异常处理
+			e.printStackTrace();
+			tag = false;
+		}
+		return tag;
+	}
+	public static boolean addRecord(Account a,double m){//为账户a添加一条流水信息
+		
+		File f =new File("BankInfoTable.txt");				//建立文件对象
+		try {
+			if(!f.exists())									//判断文件是否存在，如果文件不存在，建立一个新的文件。
+				f.createNewFile();
+			FileWriter fos = new FileWriter(f,true);		//建立文件输出的FileWriter对象，打开文件时保存文件中原有的内容
+			PrintWriter pw = new PrintWriter(fos);			//用PrintWriter类包装FileWriter对象
+			int n=a.getRecordNubmer();						//设置流水记录增加一条
+			n++;
+			a.setRecordNumber(n);;
+			
+			pw.println(n+"\t"+a.ToRecord(m));				//将用户的流水记录添加到文件末尾
+			pw.close();
+			fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	public static String[] selectAccount(String target){
+		//按照字符串target查找用户信息，target可以是任何字符串
+		//查找到的内容可能输多条，所以返回类型应该是字符串数组
+		String result = "";
+		try {
+			FileReader fr = new FileReader("ClientInfoTable.txt");	//建立文件读取对象
+			BufferedReader br = new BufferedReader(fr);				//用BufferedReader类包装文件读取对象
+			String s=null;
+			while((s=br.readLine())!=null){						//从文件中读入
